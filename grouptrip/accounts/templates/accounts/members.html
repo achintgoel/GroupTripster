@@ -1,0 +1,12 @@
+{% if to_follow_relationships %}
+<form action="{% url 'social_relationships:follow' %}" method="post">
+{% csrf_token %}
+    {% for user in to_follow_relationships %}
+    	<label for="user{{ forloop.counter }}">{{ user.username }}</label>
+    	<input type="hidden" name="username" value={{ user.username }}>
+    	<input type="submit" value="Follow" /><br />
+    {% endfor %}
+</form>
+{% else %}
+    <p>Following nobody</p>
+{% endif %}

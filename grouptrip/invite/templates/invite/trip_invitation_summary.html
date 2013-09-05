@@ -1,0 +1,8 @@
+<tr>
+	<td>{{trip_invitation.trip.name}}</td>
+	<td>{{trip_invitation.trip.start_date}}</td>
+	<td>{{trip_invitation.trip.end_date}}</td>
+	<td>{{trip_invitation.sender.username}}</td>
+	<td><a id="acceptInvitation" class="btn btn-primary btn-small" href="{% url 'invite:accept_invite' trip_invitation.trip.slug %}">Accept Invite</a></td>
+</tr>
+

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome Home!{% endblock %}
+
+{% block content %}
+<form form action="{% url 'accounts:settings' %}" method="post">
+{% csrf_token %}
+    {{ form.as_p }}
+    <input type='submit' value='submit'>
+</form>
+{% endblock %}

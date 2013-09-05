@@ -1,0 +1,72 @@
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<div id="createActivity" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Create Activity</h4>
+      </div>
+      <div class="modal-body">
+        <form id="createActivityForm" class="form-horizontal">
+		  <div class="form-group">
+		  	<div class="col-lg-3">
+		    	<label for="id_name" class="control-label pull-right">Name</label>
+		    </div>
+		    <div class="col-lg-8">
+		      <input type="text" class="form-control pull-left" id="id_name" maxlength="500" name="name" placeholder="Enter Name">
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		  	<div class="col-lg-3">
+		    	<label for="id_start_date" class="control-label pull-right">Date</label>
+		    </div>
+		    <div class="col-lg-3">
+		      <input type="text" class="form-control pull-left" id="id_start_date" name="start_date" placeholder="Date">
+		    </div>
+		    <div class="col-lg-2">
+		    	<label for="id_start_time" class="control-label pull-right">Time</label>
+		    </div>
+		    <div class="col-lg-3">
+		      <input type="text" class="form-control pull-left" id="id_start_time" name="start_time" placeholder="Time">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		  	<div class="col-lg-3">
+		    	<label for="id_category" class="control-label pull-right">Category</label>
+		    </div>
+		    <div class="col-lg-5">
+		      <select id="id_category" name="category" class="form-control pull-left input-sm">
+				<option value="" selected="selected">---------</option>
+				<option value="restaurant">Restaurant</option>
+				<option value="attraction">Attraction</option>
+			  </select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		  	<div class="col-lg-3">
+		    	<label for="id_address" class="control-label pull-right">Address</label>
+		    </div>
+		    <div class="col-lg-8">
+		      <input type="text" class="form-control pull-left" id="id_address" maxlength="500" name="address" placeholder="Enter Address">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		  	<div class="col-lg-3">
+		    	<label for="id_description" class="control-label pull-right">Description</label>
+		    </div>
+		    <div class="col-lg-8">
+		      <textarea class="form-control pull-left" id="id_description" name="description" rows="3" placeholder="Enter Description"></textarea>
+		    </div>
+		    <input type="hidden" id="id_reference" />
+		  </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="onSaveActivity()">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

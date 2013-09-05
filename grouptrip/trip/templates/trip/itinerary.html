@@ -1,0 +1,21 @@
+<div class="col-lg-5">
+  	<div class="tabbable" id="itinerary">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#activitiesTab" data-toggle="tab"><h5>Activities</h5></a></li>
+			<li><a href="#tab2" data-toggle="tab"><h5>Accommodations</h5></a></li>
+			<li><a href="#tab3" data-toggle="tab"><h5>Transport</h5></a></li>
+		</ul>
+	 	<div class="tab-content">
+	 		<div class="tab-pane active" id="activitiesTab">
+	 				{% include "trip/activities.html" with activities=activities dates=dates activity_category_icons=activity_category_icons%}
+				
+	 		</div>
+	 		<div class="tab-pane" id="tab2">
+	 			<p>Howdy, I'm in Section 2.</p>	
+	 		</div>
+	 		<div class="tab-pane" id="tab3">
+	 			<p>Howdy, I'm in Section 3.</p>	
+	 		</div>
+	 	</div>
+	 </div>
+  </div>

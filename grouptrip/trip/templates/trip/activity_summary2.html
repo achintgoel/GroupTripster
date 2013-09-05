@@ -1,0 +1,30 @@
+{% load staticfiles %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+  	<h3 class="panel-title">
+  	<span class="{{activity_category_icon}}"></span>  {{name}}
+  	</h3>
+  </div>
+  
+  <div class="panel-body">
+	  <div class="media">
+		  <a class="pull-left" href="#">
+		    <img id="{{ id }}activityPicture" class="media-object">
+		  </a>
+		  <div class="media-body">
+		    <h5>{{ address }}</h5>
+		    <p><span class="glyphicon glyphicon-time"></span> {{ start_time }}</p>
+		    <p>
+			    <div class="pull-right">				
+			    	<button type="button" class="btn btn-info btn-xs show-on-map" data-name="{{name}}">Show on Map</button>
+			    </div>
+		    </p>
+		  </div>
+		</div>
+	  
+	  <div class="collapse" id="{{ id }}activityContent">
+	  	<hr>
+	  	{{description}}
+	  </div>
+	</div>
+</div>

@@ -1,0 +1,12 @@
+<div class="col-lg-5">
+	<ul class="list-group">
+		{% for user_item in user_list %}
+	  		<li class="list-group-item">
+	  			<p>
+	  				{{user_item.username}}
+	  				<button type="button" onclick="onInvite({{user_item.pk}})" class="btn btn-primary btn-small pull-right">Invite</button>
+	  			</p>
+	  		</li>
+	  	{% endfor %}
+	</ul>
+</div>

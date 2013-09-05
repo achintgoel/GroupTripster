@@ -1,0 +1,54 @@
+<form id="task_form" class="form-horizontal">
+		<div class="form-group">
+			<div class="col-lg-8">
+				<label for="task_name">Name</label>
+			    <input type="text" class="form-control" id="task_name" placeholder="Enter Name">
+	 		</div>
+	 	</div>
+		<div class ="form-group">
+			<div class="col-lg-6">
+				<label for="task_category">Category</label>
+				<select id="task_category" class="form-control">
+					<option value="" selected="selected">-------</option>
+					<option value="accommodation">Book Accommodation</option>
+					<option value="reservation">Make Reservation</option>
+					<option value="to_bring">Bring Item(s)</option>
+					<option value="miscellaneous">Miscellaneous</option> 
+				</select>
+			</div>
+			<div class="col-lg-6">
+				<label for="task_assign_to">Assign To</label>
+				<input list="trip_participants" class="form-control" id="task_assign_to">
+				<datalist id="trip_participants">
+					{% for trip_participant in trip_participants %}
+				  		<option value="{{ trip_participant.participant.username}}">
+				  	{% endfor %}
+				</datalist>
+			</div>
+			
+		</div>
+		
+		<div class="form-group">
+			<div class="col-lg-6">
+					<label for="task_link">Link</label>
+					<input type="text" class="form-control" id="task_link" placeholder="Enter URL">
+			</div>
+		</div>
+			
+		<div class="form-group">
+			<div class="col-lg-10">
+				<label for="task_description">Description</label>
+				<textarea class="form-control" id="task_description" name="description" rows="3" placeholder="Task Description"></textarea>
+			</div>
+		</div>
+	  
+</form>
+<div class="row">
+	<div class="col-lg-6">
+		<button id="save_task" class="btn btn-default">Save</button>
+		<button id="cancel_task" class="btn btn-default">Cancel</button>
+	</div>
+</div>
+
+
+

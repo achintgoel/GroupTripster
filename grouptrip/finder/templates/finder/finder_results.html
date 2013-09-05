@@ -1,0 +1,17 @@
+{% for location in locations %}
+	<div class="media">
+		<div class="media-body">
+			<p>
+				<h4 class="media-heading">
+					<a href={{location.profile}}>{{location.name}}</a>
+				</h4>
+			</p>
+			<p>
+				<h5>{{location.address.street}}, {{ location.address.city }}, {{location.address.state}}, {{location.address.postal_code}}</h5>
+			</p>
+			<div class="pull-right">
+				<button type="button" class="btn btn-primary btn-small finder-add" data-name="{{location.name}}">Add to Itinerary</button>
+			</div>
+		</div>
+	</div>
+{% endfor %}

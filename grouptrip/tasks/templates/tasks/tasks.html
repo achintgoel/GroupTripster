@@ -1,0 +1,17 @@
+<p>
+	<button id="add_task" type="button" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span>  Add Task</button>
+</p>
+<div id="task_form_div" class="collapse">
+	<p>
+	{% include "tasks/task_form.html" with trip_participants=trip_participants%}
+	</p>
+</div>
+<table id="tasks_table" class="table table-hover">
+	{% for task in tasks %}
+				{% include "tasks/task_summary.html" with task=task%}
+	{% empty %}
+		<div id="no_tasks">
+			<p>No Tasks</p>
+		</div>
+	{% endfor %}
+</table>
