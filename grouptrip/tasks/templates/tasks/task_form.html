@@ -19,7 +19,7 @@
 			<div class="col-lg-6">
 				<label for="task_assign_to">Assign To</label>
 				<input list="trip_participants" class="form-control" id="task_assign_to">
-				<datalist id="trip_participants">
+				<datalist class="form_control" id="trip_participants">
 					{% for trip_participant in trip_participants %}
 				  		<option value="{{ trip_participant.participant.username}}">
 				  	{% endfor %}
@@ -43,12 +43,9 @@
 		</div>
 	  
 </form>
-<div class="row">
-	<div class="col-lg-6">
+<p>
 		<button id="save_task" class="btn btn-default">Save</button>
 		<button id="cancel_task" class="btn btn-default">Cancel</button>
-	</div>
-</div>
-
+</p>
 
 

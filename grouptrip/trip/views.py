@@ -131,19 +131,29 @@ def trip_profile(request, slug):
     instance = UserSocialAuth.objects.filter(provider='facebook').get(user=request.user)
     graph = facebook.GraphAPI(instance.tokens['access_token'])
     user_profile = graph.get_object("me", fields="id, name, first_name, last_name, picture")
-    #friends = graph.get_connections("me", "friends")
+    
+    users_participants_social_auth = UserSocialAuth.objects.filter(user__in=trip_participants_values)
+    friend_participants_profiles = []
+    
+    for user_participant_social_auth in users_participants_social_auth:
+        friend_participant = graph.get_connections("me", "friends/"+user_participant_social_auth.uid)
+        friend_participant_data = friend_participant['data']
+        if friend_participant_data:
+            friend_participant_profile = graph.get_object(friend_participant_data[0]['id'], fields="id, name, first_name, last_name, picture")
+            friend_participants_profiles.append(friend_participant_profile)
+    
     
     #get all social auth profiles of non participant users
     #TODO: move this to an individual function
-    users_social_auth = UserSocialAuth.objects.exclude(user__in=trip_participants_values)
-    friend_profiles = []
+    #users_social_auth = UserSocialAuth.objects.exclude(user__in=trip_participants_values)
+    #friend_profiles = []
     
-    for user_social_auth in users_social_auth:
-        friend = graph.get_connections("me", "friends/"+user_social_auth.uid)
-        friend_data = friend['data']
-        if friend_data:
-            friend_profile = graph.get_object(friend_data['id'], fields="id, name, first_name, last_name, picture")
-            friend_profiles.append(friend_profile)
+    #for user_social_auth in users_social_auth:
+    #    friend = graph.get_connections("me", "friends/"+user_social_auth.uid)
+    #    friend_data = friend['data']
+    #    if friend_data:
+    #        friend_profile = graph.get_object(friend_data['id'], fields="id, name, first_name, last_name, picture")
+    #        friend_profiles.append(friend_profile)
     #TODO:change this to get only list of friends
     user_list = User.objects.exclude(pk__in=trip_participants_values)
     return render_to_response('trip/trip_profile.html', locals(), context_instance=RequestContext(request))

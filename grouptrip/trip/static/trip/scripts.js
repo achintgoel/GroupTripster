@@ -93,6 +93,47 @@ function onFinderSearch(){
 		}, "json");
 }
 
+function onFinderYelpSearch(){
+	// build an object of review data to submit
+	jQuery("#finder_results").empty();
+	var query = { 
+		where: jQuery("#where").val(),
+		term: jQuery("#what").val() };
+	// make request, process response
+	jQuery.post("/finder/get_finder_results_yelp/", query,
+		function(response){
+			if(response.success == "True"){	
+				jQuery("#finder_results").append(response.html);
+				jQuery(".finder-add").click(function () {
+					var name = $(this).data( "name" );
+					var address = $(this).data( "address" );
+					onAddActivityReal(name, address);
+				});
+			}
+			else{
+				//TODO:Add in error cases, show errors in form!
+			}
+		}, "json");
+}
+
+//function that is called when save is pressed on the modal
+function onFinderExpediaSearch(){
+	// build an object of review data to submit
+	jQuery("#finder_hotel_results").empty();
+	var query = {};
+	// make request, process response
+	jQuery.post("/finder/get_finder_results_expedia/", query,
+		function(response){
+			if(response.success == "True"){	
+				jQuery("#finder_hotel_results").append(response.html);
+			}
+			else{
+				//TODO:Add in error cases, show errors in form!
+			}
+		}, "json");
+}
+
+
 function initialize() {
 	  geocoder = new google.maps.Geocoder();
 	  map = new google.maps.Map(document.getElementById('map-canvas'), {
@@ -203,10 +244,10 @@ function onAddActivity() {
 	$('#createActivity').modal();
 }
 
-function onAddActivityReal(name) {
+function onAddActivityReal(name, address) {
 	document.getElementById("createActivityForm").reset();
 	jQuery("#id_name").val(name);
-	//jQuery("#id_address").val(address);
+	jQuery("#id_address").val(address);
 	$('#createActivity').modal();
 }
 
@@ -333,6 +374,10 @@ function onCompleteTask(task_id) {
 		}, "json");
 }
 
+function showTaskDetails(task_num) {
+	jQuery('#tasks_content').carousel(task_num);
+}
+
 $(window).resize(function () {
     var h = $(window).height(),
         offsetTop = 60; // Calculate the top offset
@@ -345,20 +390,59 @@ function prepareDocument() {
 	jQuery("#createTripButton").click(onCreateNewTrip);
 	jQuery("#saveTripButton").click(onSaveTrip);
 	jQuery("#createActivityButton").click(onCreateNewActivity);
-	jQuery("#finder_search").click(onFinderSearch);
+	jQuery("#finder_search").click(onFinderYelpSearch);
+	
+	//TASKS SETUP
 	jQuery("#add_task").click(onAddTask);
 	jQuery("#save_task").click(onSaveTask);
 	jQuery("#cancel_task").click(onCancelTask);
-	jQuery(".complete_task").change(function () {
+	jQuery(".complete_task").change(function (event) {
+		event.stopPropagation();
 		if($(this).is(':checked')) {
 			onCompleteTask($(this).val());
 		}
+		//TODO: else unfinish task
 		
 	});
+	jQuery(".complete_task").click(function (event) {
+		event.stopPropagation();
+	});
+	jQuery('#tasks_content').carousel({interval : false});
+	jQuery("#tasks_table tr").click(function () {
+		var task_num = $(this).data( "task-num" );
+		showTaskDetails(task_num);
+	});
+	jQuery(".prev_tasks").click(function () {
+		jQuery('#tasks_content').carousel(0);
+	});
+	
 	jQuery(".show-on-map").click(function () {
 					var name = $(this).data( "name" );
 					onShowOnMap(name);
+	});
+				
+	//ACTIVITIES SETUP	
+	jQuery('#activity_content').carousel({interval : false});
+	jQuery("#find_activity_button").click(function () {
+					jQuery('#activity_content').carousel('next');
 				});
+	jQuery("#prev_activities").click(function () {
+					jQuery('#activity_content').carousel('prev');
+				});
+				
+	jQuery(".finder-suggestions-table tr td a").click(function(event){
+			event.preventDefault();
+			$('.finder-suggestions-table tr td a.selected').removeClass('selected');
+    		$(this).addClass('selected');
+    		var suggested_category = $(this).data( "category" );
+    		jQuery("#what").val(suggested_category);
+    		//onFinderYelpSearch(suggested_category);
+    		
+		});
+	
+	//HOTELS SETUP
+	jQuery("#finder_hotel_search").click(onFinderExpediaSearch);
+	
 	initialize();
 	loadActivityData();
 }

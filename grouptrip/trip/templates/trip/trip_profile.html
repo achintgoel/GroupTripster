@@ -14,6 +14,13 @@
 	      <div class="container">
 	        <h2>{{trip.name}}</h2>
 	        <p>{{trip.start_date}}-{{trip.end_date}}</p>
+	        <p>
+	        	<small>Participants:</small>
+	        	<img src="{{user_profile.picture.data.url}}">
+	        	{% for friend_participant_profile in friend_participants_profiles %}
+	        		<img src="{{friend_participant_profile.picture.data.url}}">
+	        	{% endfor %}
+	        </p>
 	      </div>
 	</div>
 
@@ -23,7 +30,6 @@
 	  	<div class="well sidebar-nav">
 			<ul class="nav nav-pills nav-stacked">
 				<li class="active"><a href="#itinerary" data-toggle="pill"><span class="glyphicon glyphicon-calendar"></span>  Itinerary</a></li>
-				<li><a href="#finder_tab" data-toggle="pill"><span class="glyphicon glyphicon-search"></span>  Finder</a></li>
 				<li><a href="#tasks" data-toggle="pill"><span class="glyphicon glyphicon-tasks"></span>  Tasks</a></li>
 				<li><a href="#" data-toggle="pill"><span class="glyphicon glyphicon-pencil"></span>  Surveys</a></li>
 				<li><a href="#" data-toggle="pill"><span class="glyphicon glyphicon-usd"></span>  Costs</a></li>
@@ -37,14 +43,6 @@
 	  	<!--Content of Itinerary Tab-->
 	  	<div class="tab-pane active" id="itinerary">
 	  		{% include "trip/itinerary.html" with activities=activities dates=dates activity_category_icons=activity_category_icons%}
-	  	</div>
-	  	<!--Content of Finder Tab-->
-	  	<div class="tab-pane" id="finder_tab">
-	  		<div class="col-lg-5">
-		  		{% include "finder/finder_form.html"%}
-		  		<hr>
-		  		<div id="finder_results"></div>
-	  		</div>
 	  	</div>
 	  	<!--Content of Tasks Tab-->
 	  	<div class="tab-pane" id="tasks">

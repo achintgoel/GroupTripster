@@ -1,0 +1,11 @@
+body { padding-top: 70px; }
+#map-canvas img{ max-width: none;}
+.table-scrollable{overflow:auto;}
+.image-category {margin-left: 25px;}
+.finder-suggestions-table tr td {
+  max-width: 106.5px;
+  text-align:center;
+  padding:15.75px;
+}
+.selected { font-weight: bold }
+.finder-suggestions-table tr td a:hover {text-decoration:none;}

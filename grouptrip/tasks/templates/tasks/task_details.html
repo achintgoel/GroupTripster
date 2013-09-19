@@ -1,0 +1,27 @@
+<p>
+	<a class="prev_tasks" href="#"><small><span class="glyphicon glyphicon-chevron-left"></span> Back to Tasks</small>
+	</a>
+</p>
+<div id="task_details">
+	<div id="task_detail_name">
+		<h3><strong>{{task.name}}</strong></h3>
+		<hr>
+	</div>
+	<p>
+		<button type="button" class="btn btn-default">Edit</button>
+		<button type="button" class="btn btn-default">Comment</button>
+		<button type="button" class="btn btn-default">Complete</button>
+	</p>
+	<div id="task_detail_category">
+	</div>
+	<div id="task_detail_assign_to">
+	</div>
+	<div id="task_detail_link">
+	</div>
+	<div class="panel panel-default">
+	  <div class="panel-heading"><strong>Description</strong></div>
+	  <div class="panel-body" id="task_detail_description">
+	  	{{task.description}}
+	  </div>
+	</div>
+</div>

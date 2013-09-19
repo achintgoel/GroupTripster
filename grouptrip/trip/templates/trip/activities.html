@@ -1,25 +1,39 @@
 {% load trip_extras %}
 <br>
-<div>
-	<button id="createActivityButton" type="button" class="btn btn-primary btn-small">Create Activity</button>
-</div>
-<br>
-{% for date in dates %}
-	<button type="button" class="btn btn-default dropdown-toggle btn-block" data-toggle="collapse" data-target="#my{{date|date:"Y-m-d"}}Activities">
-		Day {{ forloop.counter}}: {{ date }} <span class="glyphicon glyphicon-collapse-down"></span></button>
-	<br>
-	<div id="my{{ date|date:"Y-m-d" }}Activities" class="collapse in">
-		{% if date in activities %}
-			{% for activity in activities|lookup:date %}
-				{% include "trip/activity_summary2.html" with name=activity.name address=activity.address description=activity.description  id=activity.id start_time=activity.start_time activity_category_icon=activity_category_icons|lookup:activity.category%}
-			{% empty %}
-				<div id="no{{ date|date:"Y-m-d" }}Activities">
-					No Activities for this day
-				</div>
+
+<div id="activity_content" class="carousel slide">
+	<div class="carousel-inner">
+		<div class="item active">
+			<div>
+				<p><button id="createActivityButton" type="button" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Create Activity</button>
+				<button id="find_activity_button" type="button" class="btn btn-info btn-small"><span class="glyphicon glyphicon-search"></span> Find Activity</button>
+				</p>
+			</div>
+			{% for date in dates %}
+				<button type="button" class="btn btn-default dropdown-toggle btn-block" data-toggle="collapse" data-target="#my{{date|date:"Y-m-d"}}Activities">
+					Day {{ forloop.counter}}: {{ date }} <span class="glyphicon glyphicon-collapse-down"></span></button>
 				<br>
+				<div id="my{{ date|date:"Y-m-d" }}Activities" class="collapse in">
+					{% if date in activities %}
+						{% for activity in activities|lookup:date %}
+							{% include "trip/activity_summary2.html" with name=activity.name address=activity.address description=activity.description  id=activity.id start_time=activity.start_time activity_category_icon=activity_category_icons|lookup:activity.category%}
+						{% empty %}
+							<div id="no{{ date|date:"Y-m-d" }}Activities">
+								No Activities for this day
+							</div>
+							<br>
+						{% endfor %}
+					{% endif %}
+				</div>
 			{% endfor %}
-		{% endif %}
+	    </div>
+	    
+		<div class="item">
+			{% include "finder/finder.html"%}
+		</div>
 	</div>
-{% endfor %}
+</div>
+
+
 
 	

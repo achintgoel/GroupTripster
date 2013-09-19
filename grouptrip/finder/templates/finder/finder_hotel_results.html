@@ -1,0 +1,20 @@
+{% for hotel in hotels %}
+	<div class="media">
+		<a class="pull-left" href="#">
+			<img class="media-object" src="http://images.travelnow.com{{ hotel.thumbNailUrl}}"> 
+		</a>
+		<div class="media-body">
+			<p>
+				<h4 class="media-heading">
+					{{hotel.name}}
+				</h4>
+				{{ hotel.locationDescription }}
+			</p>
+				
+			<p>
+				{{hotel.tripAdvisorRating}}
+				<img src="{{hotel.tripAdvisorRatingUrl}}">
+			</p>
+		</div>
+	</div>
+{% endfor %}

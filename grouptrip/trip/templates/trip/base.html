@@ -6,15 +6,13 @@
 	    <title>{% block title %}My amazing site{% endblock %}</title>
 	    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
 	    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	     <style type="text/css">
-      			#map-canvas img{ max-width: none;}
-    	</style>
+	    <link href="{% static "trip/trip.css" %}" rel="stylesheet" media="screen">
 	</head>
 
 	
 	<body>
 	        {% block navbar %}
-	        	<div class="navbar navbar-inverse">
+	        	<div class="navbar navbar-inverse navbar-fixed-top">
     					<a class="navbar-brand" href="#">GroupTrip</a>
     					<ul class="nav navbar-nav">
      						 <li class="active"><a href="{% url 'accounts:profile'%}">Home</a></li>
@@ -37,6 +35,7 @@
 	        <script src="http://code.jquery.com/jquery.js"></script>
 	       	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 			<script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
+			<script type="text/javascript" src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.min.js"></script>
 			<script type="text/javascript" src="{% static "trip/scripts.js" %}"></script>
 			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBABrAliBhsGpLAQ6vZ675rShv7yyr_k2U&sensor=false&libraries=places"></script>
 			<script type="text/javascript" src="{% static "invite/scripts.js" %}"></script>			

@@ -1,0 +1,27 @@
+<p class="text-muted">
+	Showing results for <strong>{{term}}</strong> near <strong>{{location}}</strong>
+</p>
+{% for business in businesses %}
+	<div class="media">
+		<a class="pull-left" href="#">
+			<img class="media-object" src="{{ business.image_url}}"> 
+		</a>
+		<div class="media-body">
+			<p>
+				<h4 class="media-heading">
+					<a href={{business.url}}>{{business.name}}</a>
+				</h4>
+			</p>
+			<p>
+				<h5>{{business.location.address.0 }}, {{ business.location.city }}, {{business.location.state_code}}, {{business.location.postal_code}}</h5>
+			</p>
+			<img src="{{business.rating_img_url}}">
+			<small class="text-muted">{{business.review_count}} Reviews</small>
+			<p>"{{business.snippet_text}}"</p>
+			<div class="pull-right">
+				<button type="button" class="btn btn-primary btn-xs finder-add" data-name="{{business.name}}" 
+					data-address="{{business.location.address.0 }}, {{ business.location.city }}, {{business.location.state_code}}, {{business.location.postal_code}}">Add to Itinerary</button>
+			</div>
+		</div>
+	</div>
+{% endfor %}

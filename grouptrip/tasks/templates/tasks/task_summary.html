@@ -1,4 +1,4 @@
-<tr class="task-summary">
+<tr class="task-summary" data-task-num="{{ task_num }}">
 	<td><input type="checkbox" class="complete_task" value="{{task.id}}" {% if task.status == "completed"%}checked="true"{% endif %}></td>
 	<td id="task_name_display"><strong>{{ task.name }}</strong></td>
 	<td><em>Assigned To:</em> {{ task.assigned_to}}</td>
