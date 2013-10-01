@@ -1,0 +1,37 @@
+{% load trip_extras %}
+
+<h4><strong><span class="glyphicon glyphicon-comment"></span>  Discussion</strong></h4>
+<hr>
+<div id="{{activity_id}}_all_comments">
+	{% for activity_comment in activity_comments %}
+		<p>
+			{% if user.username == activity_comment.comment_by.username %}
+				{% with commentor_profile=user_profile%}
+					{% include "trip/comment.html" with commentor_profile=commentor_profile activity_comment=activity_comment%}
+				{% endwith %}
+			{% else %}
+				{% with commentor_profile=friend_participants_profiles|lookup:activity_comment.comment_by.username %}
+					{% include "trip/comment.html" with commentor_profile=commentor_profile activity_comment=activity_comment%}
+				{% endwith %}
+			{% endif %}
+				
+		</p>
+		
+	{% empty %}
+		<div id="{{activity_id}}_no_comments">
+			<p>Add a comment!</p>
+		</div>
+	{% endfor %}
+</div>
+<form id="{{activity_id}}_comment_form" class="form-horizontal">
+	<div class="form-group">
+		<div class="col-lg-12">
+			<textarea class="form-control" id="{{activity_id}}_id_comment" name="comment" rows="1" placeholder="Comment on this activity"></textarea>
+		</div>
+	</div>
+</form>
+<div class="pull-right">
+	<p>
+		 <button class="btn btn-primary comment_post" data-activity-id="{{ activity_id }}">Post</button>
+	</p>
+</div>

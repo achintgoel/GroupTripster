@@ -1,0 +1,9 @@
+<div class="media">
+  <a class="pull-left" href="#">
+    <img class="media-object" src="{{commentor_profile.picture.data.url}}">
+  </a>
+  <div class="media-body">
+    <strong>{{commentor_profile.name}}:</strong> {{activity_comment.comment}}
+    <p class="text-right text-muted"><small><em>{{activity_comment.created_at|timesince}} ago</em></small></p>
+  </div>
+</div>

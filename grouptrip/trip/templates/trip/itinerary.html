@@ -7,12 +7,11 @@
 		</ul>
 	 	<div class="tab-content">
 	 		<div class="tab-pane active" id="activitiesTab">
-	 				{% include "trip/activities.html" with activities=activities dates=dates activity_category_icons=activity_category_icons%}
+	 				{% include "trip/activities.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activities=activities dates=dates activity_category_icons=activity_category_icons%}
 	 		</div>
 	 		<div class="tab-pane" id="tab2">
-	 			<p>
-	 				<button id="finder_hotel_search" class="btn btn-default">Search</button>
-	 			</p>
+	 			<br>
+	 			{% include "finder/finder_hotel_form.html"%}
 	 			<div id="finder_hotel_results">
 	 			</div>
 	 		</div>

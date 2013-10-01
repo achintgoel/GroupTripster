@@ -1,30 +1,48 @@
 {% load staticfiles %}
 <div class="panel panel-default">
-  <div class="panel-heading">
-  	<h3 class="panel-title">
-  	<span class="{{activity_category_icon}}"></span>  {{name}}
-  	</h3>
-  </div>
-  
-  <div class="panel-body">
-	  <div class="media">
-		  <a class="pull-left" href="#">
-		    <img id="{{ id }}activityPicture" class="media-object">
-		  </a>
-		  <div class="media-body">
-		    <h5>{{ address }}</h5>
-		    <p><span class="glyphicon glyphicon-time"></span> {{ start_time }}</p>
-		    <p>
-			    <div class="pull-right">				
-			    	<button type="button" class="btn btn-info btn-xs show-on-map" data-name="{{name}}">Show on Map</button>
-			    </div>
-		    </p>
-		  </div>
+	<div class="panel-heading">
+		<h3 class="panel-title">
+		  	<span class="{{activity_category_icon}}"></span>  {{activity.name}}
+		  	<div class="pull-right">
+		  		<a href="#" class="discussion_link" data-activity-id="{{activity.id}}">
+		  			<span class="glyphicon glyphicon-comment"></span> 
+		  		</a>
+		  	</div>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<div class="container">
+			<div id="{{activity.id}}_activity_summary_content" class="activity_summary_content carousel slide">
+				<div class="carousel-inner">
+				    <div class="item active">
+				    	<div class="media">
+							  <a class="pull-left" href="#">
+							    <img id="{{ activity.id }}activityPicture" class="media-object">
+							  </a>
+							<div class="media-body">
+							    <h5>{{ activity.address }}</h5>
+							    <p><span class="glyphicon glyphicon-time"></span> {{ activity.start_time }}</p>
+						    	<a data-toggle="collapse" href="#{{ activity.id }}activityContent"><small>Show More <span class="glyphicon glyphicon-chevron-down"></span></small></a>
+							    <div class="pull-right">				
+							    	<button type="button" class="btn btn-info btn-xs show-on-map" data-name="{{activity.name}}">Show on Map</button>
+								</div>
+							</div>
+						</div>
+						<div class="collapse" id="{{ activity.id }}activityContent">
+						  	<hr>
+						  	<strong>Description:</strong> 
+						  	{% if activity.description %}
+							    {{ activity.description }}
+							{% else %}
+							    No Description.
+							{% endif %}
+						</div>
+					</div>
+					<div class="item">
+						{% include "trip/discussion.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity_id=activity.id activity_comments=activity.activitycomment_set.all%}
+					</div>
+				</div>
+			</div>
 		</div>
-	  
-	  <div class="collapse" id="{{ id }}activityContent">
-	  	<hr>
-	  	{{description}}
-	  </div>
 	</div>
 </div>

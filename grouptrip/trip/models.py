@@ -62,4 +62,12 @@ class ActivityItinerary(models.Model):
     
     class Meta:
         ordering = ['start_date', 'start_time']
-        
+
+class ActivityComment(models.Model):
+    activity = models.ForeignKey(ActivityItinerary)
+    comment_by =  models.ForeignKey(settings.AUTH_USER_MODEL)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['created_at']

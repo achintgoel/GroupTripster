@@ -5,6 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import simplejson
 from django.template.loader import render_to_string
+from xml.etree import ElementTree
 import json
 
 # Create your views here.
@@ -47,17 +48,38 @@ def get_finder_results_yelp(request):
     return HttpResponse(response, 
                         content_type='application/javascript; charset=utf-8')
     
+#TODO: change this to room group, so that adults is grouped with room number
+def create_expedia_search_xml(location, check_in, check_out, num_adults):
+    root = ElementTree.Element('HotelListRequest')
+    destinationId = ElementTree.SubElement(root, 'destinationString')
+    destinationId.text = location
+    arrivalDate = ElementTree.SubElement(root, 'arrivalDate')
+    arrivalDate.text =  check_in
+    departureDate = ElementTree.SubElement(root, 'departureDate')
+    departureDate.text =  check_out
+    roomGroup = ElementTree.SubElement(root, 'RoomGroup')
+    room = ElementTree.SubElement(roomGroup, 'Room')
+    numberOfAdults = ElementTree.SubElement(room, 'numberOfAdults')
+    numberOfAdults.text = str(num_adults)
+    return ElementTree.tostring(root)
+    
 def get_finder_results_expedia(request):
     url_params = {}
+    
+    location = request.POST.get('location')
+    check_in = request.POST.get('check_in')
+    check_out = request.POST.get('check_out')
+    num_adults = request.POST.get('num_adults')
     
     url_params['cid'] = settings.EXPEDIA_CID
     url_params['minorRev'] = 99
     url_params['apiKey'] = settings.EXPEDIA_API_KEY
     url_params['locale'] = 'en_US'
     url_params['currencyCode'] = 'USD'
-    url_params['xml'] = '<HotelListRequest><city>Seattle</city><stateProvinceCode>WA</stateProvinceCode><countryCode>US</countryCode><arrivalDate>10/17/2013</arrivalDate><departureDate>10/19/2013</departureDate><RoomGroup><Room><numberOfAdults>2</numberOfAdults></Room></RoomGroup><numberOfResults>25</numberOfResults></HotelListRequest>'
+    url_params['xml'] = create_expedia_search_xml(location, check_in, check_out, num_adults)
     
     response = expedia_api.search('api.ean.com', '/ean-services/rs/hotel/v3/list', url_params)
+    print(response)
     hotels = response['HotelListResponse']['HotelList']['HotelSummary']
     
     template = "finder/finder_hotel_results.html"

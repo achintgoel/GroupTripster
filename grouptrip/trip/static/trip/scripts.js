@@ -120,7 +120,13 @@ function onFinderYelpSearch(){
 function onFinderExpediaSearch(){
 	// build an object of review data to submit
 	jQuery("#finder_hotel_results").empty();
-	var query = {};
+	var query = {
+					location: jQuery("#hotel_location").val(),
+					check_in: jQuery("#hotel_check_in").val(),
+					check_out: jQuery("#hotel_check_out").val(),
+					rooms: jQuery("#hotel_rooms").val(),
+					num_adults: jQuery("#hotel_num_adults").val()
+				};
 	// make request, process response
 	jQuery.post("/finder/get_finder_results_expedia/", query,
 		function(response){
@@ -221,9 +227,7 @@ function onPlaceOnMap(name, address) {
           position: results[0].geometry.location
       });
       activity_markers[name] = marker;
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
+    } 
   });
 }
 
@@ -378,6 +382,24 @@ function showTaskDetails(task_num) {
 	jQuery('#tasks_content').carousel(task_num);
 }
 
+function onSaveComment(activity_id) {
+	var comment = { 
+		activity_id: activity_id,
+		comment: jQuery("#"+activity_id+"_id_comment").val()};
+		
+	jQuery.post("/trip/save_comment/", comment,
+		function(response){
+			if(response.success == "True"){
+				jQuery("#"+activity_id+"_no_comments").empty();
+				document.getElementById(activity_id+"_comment_form").reset();
+				jQuery("#"+activity_id+"_all_comments").append("<p>"+response.html+"</p>").slideDown();
+			}
+			else{
+				//TODO:Add in error cases
+			}
+		}, "json");
+}
+
 $(window).resize(function () {
     var h = $(window).height(),
         offsetTop = 60; // Calculate the top offset
@@ -439,6 +461,20 @@ function prepareDocument() {
     		//onFinderYelpSearch(suggested_category);
     		
 		});
+	
+	//DISCUSSION SETUP
+	jQuery('.activity_summary_content').carousel({interval : false});
+	jQuery(".discussion_link").click(function (e) {
+		e.preventDefault();
+		var activity_id = $(this).data( "activity-id" );
+		var carousel_id = '#'+activity_id+'_activity_summary_content';
+		jQuery(carousel_id).carousel('next');
+	});
+	jQuery(".comment_post").click(function () {
+		var activity_id = $(this).data( "activity-id" );
+		onSaveComment(activity_id);
+	});
+	
 	
 	//HOTELS SETUP
 	jQuery("#finder_hotel_search").click(onFinderExpediaSearch);

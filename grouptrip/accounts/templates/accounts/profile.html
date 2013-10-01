@@ -3,40 +3,42 @@
 {% block title %}Welcome Home!{% endblock %}
 
 {% block content %}
-	<h1>Welcome Home!</h1>
-	<table id="myTrips" class="table table-hover">
-		<caption>My Trips</caption>
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Start Date</th>
-				<th>End Date</th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for participating_trip in participating_trips %}
-			{% include "trip/trip_summary.html" with trip_info=participating_trip.trip %}
-		{% endfor %}
-		</tbody>
-	</table>
-	<button id="createTripButton" class="btn btn-primary" type="button">Start New Trip!</button>
-	{% include "trip/create_trip.html" with form=create_trip_form %}
-	
-	<table id="myTripInvitations" class="table table-hover">
-		<caption>My Trip Invitations</caption>
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Start Date</th>
-				<th>End Date</th>
-				<th>Sender</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for trip_invitation in pending_invitations %}
-			{% include "invite/trip_invitation_summary.html" with trip_invitation=trip_invitation %}
-		{% endfor %}
-		</tbody>
-	</table>
+	<div class="container">
+		<h1>Welcome Home!</h1>
+		<table id="myTrips" class="table table-hover">
+			<caption>My Trips</caption>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for participating_trip in participating_trips %}
+				{% include "trip/trip_summary.html" with trip_info=participating_trip.trip %}
+			{% endfor %}
+			</tbody>
+		</table>
+		<button id="createTripButton" class="btn btn-primary" type="button">Start New Trip!</button>
+		{% include "trip/create_trip.html" with form=create_trip_form %}
+		
+		<table id="myTripInvitations" class="table table-hover">
+			<caption>My Trip Invitations</caption>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Sender</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for trip_invitation in pending_invitations %}
+				{% include "invite/trip_invitation_summary.html" with trip_invitation=trip_invitation %}
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}

@@ -10,7 +10,7 @@ from django.utils import simplejson
 from django.utils.text import slugify
 from django.template.defaultfilters import date
 from trip.forms import CreateTripForm, CreateActivityForm
-from trip.models import Trip, TripParticipants, ActivityItinerary
+from trip.models import Trip, TripParticipants, ActivityItinerary, ActivityComment
 from tasks.models import Task
 from social_auth.db.django_models import UserSocialAuth
 import facebook
@@ -87,7 +87,7 @@ def add_activity(request):
         formatted_date = date(activity.start_date, "Y-m-d")
         activities_div_id = "#my%sActivities" % formatted_date
         no_activities_div_id = "#no%sActivities" % formatted_date
-        html = render_to_string(template, {'name': activity.name, 'address':activity.address, 'description':activity.description, 'id':activity.id, 'start_time':activity.start_time})
+        html = render_to_string(template, {'activity': activity})
         response = simplejson.dumps({'success':'True', 'html': html, 'activities_div_id':activities_div_id, 'no_activities_div_id':no_activities_div_id})
     
     else:
@@ -108,14 +108,32 @@ def get_activities(request):
     
     return HttpResponse(response, 
                         content_type='application/javascript; charset=utf-8')
+
+@login_required
+def save_comment(request):
+    activity_id = request.POST.get('activity_id')
+    comment = request.POST.get('comment')
+    comment_by = request.user
+    activity = get_object_or_404(ActivityItinerary, pk=activity_id)
+    activity_comment = ActivityComment(activity=activity, comment_by=comment_by, comment=comment)
+    activity_comment.save()
     
+    template = "trip/comment.html"
+    instance = UserSocialAuth.objects.filter(provider='facebook').get(user=request.user)
+    graph = facebook.GraphAPI(instance.tokens['access_token'])
+    user_profile = graph.get_object("me", fields="id, name, first_name, last_name, picture")
+    
+    html = render_to_string(template, {'activity_comment': activity_comment, 'commentor_profile':user_profile})
+    response = simplejson.dumps({'success':'True', 'html':html})
+    return HttpResponse(response, 
+                        content_type='application/javascript; charset=utf-8')
 
 def trip_profile(request, slug):
     #TODO:either the trip is created by the user, or user is part of it
     trip = get_object_or_404(Trip, slug=slug)
     #TODO:get only the user objects instead of the TripParticipants objects
     trip_participants = trip.tripparticipants_set.all()
-    trip_participants_values = trip.tripparticipants_set.values('participant')
+    trip_participants_values = trip.tripparticipants_set.values_list('participant', flat=True)
     create_activity_form = CreateActivityForm
     dates = list(date_range(trip.start_date, trip.end_date))
     #TODO:change how this works?!
@@ -123,7 +141,7 @@ def trip_profile(request, slug):
     activities = {}
     for date in dates:
         activities[date] = trip.activityitinerary_set.filter(start_date=date)
-    
+        
     activity_category_icons = ActivityItinerary.ACTIVITY_CATEGORY_ICONS
     
     tasks = Task.objects.filter(trip=trip)
@@ -132,15 +150,15 @@ def trip_profile(request, slug):
     graph = facebook.GraphAPI(instance.tokens['access_token'])
     user_profile = graph.get_object("me", fields="id, name, first_name, last_name, picture")
     
-    users_participants_social_auth = UserSocialAuth.objects.filter(user__in=trip_participants_values)
-    friend_participants_profiles = []
+    users_participants_social_auth = UserSocialAuth.objects.filter(user__in=list(trip_participants_values))
+    friend_participants_profiles = {}
     
     for user_participant_social_auth in users_participants_social_auth:
         friend_participant = graph.get_connections("me", "friends/"+user_participant_social_auth.uid)
         friend_participant_data = friend_participant['data']
         if friend_participant_data:
             friend_participant_profile = graph.get_object(friend_participant_data[0]['id'], fields="id, name, first_name, last_name, picture")
-            friend_participants_profiles.append(friend_participant_profile)
+            friend_participants_profiles[user_participant_social_auth.user.username] = friend_participant_profile
     
     
     #get all social auth profiles of non participant users
@@ -155,5 +173,5 @@ def trip_profile(request, slug):
     #        friend_profile = graph.get_object(friend_data['id'], fields="id, name, first_name, last_name, picture")
     #        friend_profiles.append(friend_profile)
     #TODO:change this to get only list of friends
-    user_list = User.objects.exclude(pk__in=trip_participants_values)
+    user_list = User.objects.exclude(pk__in=list(trip_participants_values))
     return render_to_response('trip/trip_profile.html', locals(), context_instance=RequestContext(request))
