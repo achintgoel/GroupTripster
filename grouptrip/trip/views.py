@@ -58,10 +58,11 @@ def save(request):
         response = simplejson.dumps({'success':'False', 'html': html})
     return HttpResponse(response, 
                         content_type='application/javascript; charset=utf-8')
-    
+
+
 @login_required
 def add_activity(request):
-        
+    activity_id =  request.POST.get('activity_id')
     name = request.POST.get('name')
     address = request.POST.get('address')
     description = request.POST.get('description')
@@ -69,18 +70,32 @@ def add_activity(request):
     start_time = request.POST.get('start_time')
     category = request.POST.get('category')
     reference = request.POST.get('reference')
+    photo = request.POST.get('photo')
     slug = request.POST.get('slug')
+
     #TODO verify user is either creator or planner
-    trip = get_object_or_404(Trip, slug=slug)
-    form = CreateActivityForm({'name':name, 'address':address, 'reference':reference, 'start_date':start_date,'start_time':start_time, 'category':category, 'description':description})
-    #TODO:verify that activity hasnt been added already (by trip id)...if so, get and save the new info
-    #TODO: check if form submitted is valid, if not, pass back error to javascript function
-    if form.is_valid():
-        activity = ActivityItinerary(name=form.cleaned_data['name'], trip=trip, reference=form.cleaned_data['reference'], start_date=form.cleaned_data['start_date'], 
-                                     start_time=form.cleaned_data['start_time'], address=form.cleaned_data['address'], category=form.cleaned_data['category'], description=form.cleaned_data['description'])
     
-    #activity = ActivityItinerary(trip=trip, name=name, address=address, start_date=start_date, start_time=start_time, category=category, description=description)
-    #activity.save() 
+    form = CreateActivityForm({'name':name, 'address':address, 'reference':reference, 'start_date':start_date,'start_time':start_time, 'category':category, 'description':description, 'photo':photo})
+    #TODO: check if form submitted is valid, if not, pass back error to javascript function
+    
+    if form.is_valid():
+        if activity_id:
+            activity = get_object_or_404(ActivityItinerary, pk=activity_id)
+            activity.name = form.cleaned_data['name']
+            activity.address = form.cleaned_data['address']
+            activity.description = form.cleaned_data['description']
+            activity.start_date = form.cleaned_data['start_date']
+            activity.start_time = form.cleaned_data['start_time']
+            activity.category = form.cleaned_data['category']
+            activity.photo = form.cleaned_data['photo']
+            edited = 'True'
+        else:
+            trip = get_object_or_404(Trip, slug=slug)
+            activity = ActivityItinerary(name=form.cleaned_data['name'], trip=trip, reference=form.cleaned_data['reference'], start_date=form.cleaned_data['start_date'], 
+                                         start_time=form.cleaned_data['start_time'], address=form.cleaned_data['address'], 
+                                         category=form.cleaned_data['category'], description=form.cleaned_data['description'], photo=form.cleaned_data['photo'])
+            edited = 'False'
+            
         activity.save()
         template = "trip/activity_summary2.html"
         #TODO:is there a better way to figure out which div this activity panel goes into?
@@ -88,9 +103,10 @@ def add_activity(request):
         activities_div_id = "#my%sActivities" % formatted_date
         no_activities_div_id = "#no%sActivities" % formatted_date
         html = render_to_string(template, {'activity': activity})
-        response = simplejson.dumps({'success':'True', 'html': html, 'activities_div_id':activities_div_id, 'no_activities_div_id':no_activities_div_id})
+        response = simplejson.dumps({'success':'True', 'html': html, 'activities_div_id':activities_div_id, 'no_activities_div_id':no_activities_div_id, 'edited':edited})
     
     else:
+        print(form.errors.as_ul())
         html = form.errors.as_ul()
         response = simplejson.dumps({'success':'False', 'html': html})
     return HttpResponse(response, 
@@ -108,6 +124,10 @@ def get_activities(request):
     
     return HttpResponse(response, 
                         content_type='application/javascript; charset=utf-8')
+
+@login_required
+def get_social_activities(request):
+    return
 
 @login_required
 def save_comment(request):
@@ -158,20 +178,21 @@ def trip_profile(request, slug):
         friend_participant_data = friend_participant['data']
         if friend_participant_data:
             friend_participant_profile = graph.get_object(friend_participant_data[0]['id'], fields="id, name, first_name, last_name, picture")
-            friend_participants_profiles[user_participant_social_auth.user.username] = friend_participant_profile
+            friend_participants_profiles[user_participant_social_auth.user.username] = friend_participant_profile    
+    
+    #user_social_profiles = {}
+    #friends_non_users = []
+    #friends = graph.get_connections("me", "friends", fields="id, name, first_name, last_name, picture")
+    #for friend in friends['data']:
+     #   try:
+     #       user_social_auth = UserSocialAuth.objects.get(uid=friend['id'])
+     #       user_social_profiles[user_social_auth.user.id] = friend
+      #      if trip.tripparticipants_set.filter(participant=user_social_auth.user).exists():
+                
+      #  except UserSocialAuth.DoesNotExist:
+      #      friends_non_users.append(friend)
     
     
-    #get all social auth profiles of non participant users
-    #TODO: move this to an individual function
-    #users_social_auth = UserSocialAuth.objects.exclude(user__in=trip_participants_values)
-    #friend_profiles = []
     
-    #for user_social_auth in users_social_auth:
-    #    friend = graph.get_connections("me", "friends/"+user_social_auth.uid)
-    #    friend_data = friend['data']
-    #    if friend_data:
-    #        friend_profile = graph.get_object(friend_data['id'], fields="id, name, first_name, last_name, picture")
-    #        friend_profiles.append(friend_profile)
-    #TODO:change this to get only list of friends
     user_list = User.objects.exclude(pk__in=list(trip_participants_values))
     return render_to_response('trip/trip_profile.html', locals(), context_instance=RequestContext(request))

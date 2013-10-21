@@ -1,45 +1,63 @@
 {% load staticfiles %}
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">
-		  	<span class="{{activity_category_icon}}"></span>  {{activity.name}}
-		  	<div class="pull-right">
-		  		<a href="#" class="discussion_link" data-activity-id="{{activity.id}}">
-		  			<span class="glyphicon glyphicon-comment"></span> 
-		  		</a>
-		  	</div>
-		</h3>
-	</div>
-	<div class="panel-body">
-		<div class="container">
-			<div id="{{activity.id}}_activity_summary_content" class="activity_summary_content carousel slide">
-				<div class="carousel-inner">
-				    <div class="item active">
-				    	<div class="media">
-							  <a class="pull-left" href="#">
-							    <img id="{{ activity.id }}activityPicture" class="media-object">
-							  </a>
-							<div class="media-body">
-							    <h5>{{ activity.address }}</h5>
-							    <p><span class="glyphicon glyphicon-time"></span> {{ activity.start_time }}</p>
-						    	<a data-toggle="collapse" href="#{{ activity.id }}activityContent"><small>Show More <span class="glyphicon glyphicon-chevron-down"></span></small></a>
-							    <div class="pull-right">				
-							    	<button type="button" class="btn btn-info btn-xs show-on-map" data-name="{{activity.name}}">Show on Map</button>
+<div id="{{activity.id}}_activity_summary">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<div class="row">
+					<div class="col-lg-8">
+				  		<span class="{{activity_category_icon}} icons"></span>{{activity.name}}
+				  	</div>
+				  	<div class="col-lg-4">
+				  		<div class="pull-right">
+					  		<a href="#" class="edit_activity" data-activity-id="{{activity.id}}" data-activity-name="{{activity.name}}" data-activity-start-date="{{activity.start_date|date:"m/d/Y"}}"
+					  		data-activity-start-time="{{activity.start_time|time:"H:i"}}" data-activity-address="{{activity.address}}" data-activity-description="{{activity.description}}" data-activity-category="{{activity.category}}">
+					  			<span class="glyphicon glyphicon-edit"></span> 
+					  		</a>
+					  		<a href="#" class="review_link" data-activity-id="{{activity.id}}">
+					  			<span class="glyphicon glyphicon-star"></span> 
+					  		</a>
+					  		<a href="#" class="discussion_link" data-activity-id="{{activity.id}}">
+					  			<span class="glyphicon glyphicon-comment"></span> 
+					  		</a>
+				  		</div>
+				  	</div>
+				  </div>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<div class="container">
+				<div id="{{activity.id}}_activity_summary_content" class="activity_summary_content carousel slide">
+					<div class="carousel-inner">
+					    <div class="item active">
+					    	<div class="media">
+								  <a class="pull-left" href="#">
+								    <img id="{{ activity.id }}activityPicture" class="media-object" src="{{ activity.photo }}">
+								  </a>
+								<div class="media-body">
+								    <h5>{{ activity.address }}</h5>
+								    <p><span class="glyphicon glyphicon-time"></span> {{ activity.start_time }}</p>
+							    	<a data-toggle="collapse" href="#{{ activity.id }}activityContent"><small>Show More <span class="glyphicon glyphicon-chevron-down"></span></small></a>
+								    <div class="pull-right">				
+								    	<button type="button" class="btn btn-info btn-xs show-on-map" data-name="{{activity.name}}">Show on Map</button>
+									</div>
 								</div>
 							</div>
+							<div class="collapse" id="{{ activity.id }}activityContent">
+							  	<hr>
+							  	<strong>Description:</strong> 
+							  	{% if activity.description %}
+								    {{ activity.description }}
+								{% else %}
+								    No Description.
+								{% endif %}
+							</div>
 						</div>
-						<div class="collapse" id="{{ activity.id }}activityContent">
-						  	<hr>
-						  	<strong>Description:</strong> 
-						  	{% if activity.description %}
-							    {{ activity.description }}
-							{% else %}
-							    No Description.
-							{% endif %}
+						<div class="item">
+							{% include "trip/review.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity_id=activity.id%}
 						</div>
-					</div>
-					<div class="item">
-						{% include "trip/discussion.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity_id=activity.id activity_comments=activity.activitycomment_set.all%}
+						<div class="item">
+							{% include "trip/discussion.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity_id=activity.id activity_comments=activity.activitycomment_set.all%}
+						</div>
 					</div>
 				</div>
 			</div>

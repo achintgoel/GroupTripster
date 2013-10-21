@@ -1,27 +1,31 @@
 {% load trip_extras %}
+<hr>
 {% for hotel in hotels %}
 	<div class="media">
 		<a class="pull-left" href="#">
 			<img class="media-object" src="http://images.travelnow.com{{ hotel.thumbNailUrl}}"> 
 		</a>
 		<div class="media-body">
-			<p>
 				<h4 class="media-heading">
-					{{hotel.name}}
-					<div class="pull-right text-info">
-						${{ hotel.RoomRateDetailsList.RoomRateDetails.RateInfos.RateInfo.ChargeableRateInfo|lookup:'@averageRate' }}
+					<div id="finder-hotel-name">
+							{{hotel.name}}
 					</div>
 				</h4>
-				{{ hotel.locationDescription }}
-				<div class="pull-right">
-					<button type="button" class="btn btn-primary">Book</button>
-				</div>
-			</p>
 				
-			<p>
-				<strong>{{hotel.tripAdvisorRating}}</strong>
-				<img src="{{hotel.tripAdvisorRatingUrl}}">
-			</p>
+				<div>
+					<small>{{ hotel.locationDescription }}</small>
+					<div class="pull-right text-success">
+						<strong>${{ hotel.RoomRateDetailsList.RoomRateDetails.RateInfos.RateInfo.ChargeableRateInfo|lookup:'@averageRate' }}</strong>
+					</div>
+				</div>
+				<div>
+					<strong>{{hotel.tripAdvisorRating|floatformat:1}}</strong>
+					<img src="{{hotel.tripAdvisorRatingUrl}}">
+					<div class="pull-right">
+						<button type="button" class="btn btn-primary">Book</button>
+					</div>
+				</div>
 		</div>
 	</div>
+	<hr>
 {% endfor %}

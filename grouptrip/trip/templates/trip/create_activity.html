@@ -51,6 +51,19 @@
 		      <input type="text" class="form-control pull-left" id="id_address" maxlength="500" name="address" placeholder="Enter Address">
 		    </div>
 		  </div>
+		  
+		  
+		  <div class="collapse" id="activity_photo_collapse">
+				<div class="form-group">
+				  	<div class="col-lg-3">
+				    	<label for="id_activity_photo" class="control-label pull-right">Choose a Photo</label>
+				    </div>
+				    <div class="col-lg-8" id="id_activity_photo">
+				    </div>
+				</div>
+		  </div>
+		  
+		  
 		  <div class="form-group">
 		  	<div class="col-lg-3">
 		    	<label for="id_description" class="control-label pull-right">Description</label>
@@ -58,6 +71,7 @@
 		    <div class="col-lg-8">
 		      <textarea class="form-control pull-left" id="id_description" name="description" rows="3" placeholder="Enter Description"></textarea>
 		    </div>
+		    <input type="hidden" id="id_activity_id" />
 		    <input type="hidden" id="id_reference" />
 		  </div>
 		</form>

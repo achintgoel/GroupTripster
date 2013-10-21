@@ -7,5 +7,33 @@ body { padding-top: 70px; }
   text-align:center;
   padding:15.75px;
 }
+.icons {
+	padding-right:10px;
+}
 .selected { font-weight: bold }
+.activity-photo-selected { 
+	border-style:solid;
+	border-color:#006699; 
+}
+
+#id_activity_photo a:hover {text-decoration:none;}
+
 .finder-suggestions-table tr td a:hover {text-decoration:none;}
+.pac-container {
+  z-index: 1040 !important;
+}
+
+.left-content {
+	border-right-style:solid;
+	border-width:1px;
+	border-color:#DCDCDC; 
+	overflow:scroll;
+}
+
+#finder-hotel-name {
+	width: 310px;
+}
+
+.btn-nav-group {
+	padding-bottom:26px;
+}

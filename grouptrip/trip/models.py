@@ -59,6 +59,7 @@ class ActivityItinerary(models.Model):
     start_time = models.TimeField("Time",blank=True, null=True)
     category = models.CharField(max_length=100, choices=ACTIVITY_CATEGORY_CHOICES, blank=True)
     description = models.TextField(blank=True)
+    photo = models.URLField(blank=True)
     
     class Meta:
         ordering = ['start_date', 'start_time']
@@ -71,3 +72,10 @@ class ActivityComment(models.Model):
     
     class Meta:
         ordering = ['created_at']
+
+class ActivityReview(models.Model):
+    activity = models.ForeignKey(ActivityItinerary)
+    review_by =  models.ForeignKey(settings.AUTH_USER_MODEL)
+    review_rating = models.FloatField()
+    review_description = models.TextField()
+    

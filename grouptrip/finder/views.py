@@ -34,15 +34,14 @@ def get_finder_results(request):
 def get_finder_results_yelp(request):
     url_params = {}
     
-    location = request.POST.get('where')
-    term = request.POST.get('term')
+    location = request.GET.get('where')
+    term = request.GET.get('term')
     url_params['location'] = location
     url_params['term'] = term
-    
     response = yelp_api.search('api.yelp.com', '/v2/search', url_params, settings.YELP_CONSUMER_KEY, settings.YELP_CONSUMER_SECRET, settings.YELP_TOKEN, settings.YELP_TOKEN_SECRET)
     businesses = response['businesses']
     
-    template = "finder/finder_results2.html"
+    template = "finder/finder_activities_results.html"
     html = render_to_string(template, {'location':location, 'term':term, 'businesses': businesses})
     response = simplejson.dumps({'success':'True', 'html':html})
     return HttpResponse(response, 

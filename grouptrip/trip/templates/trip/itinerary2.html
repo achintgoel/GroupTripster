@@ -1,0 +1,21 @@
+<div class="col-lg-6 left-content" id="itinerary_content">
+	  		<div class="container">
+					<div class="dropdown">
+						  <a data-toggle="dropdown" href="#"><strong><span class="glyphicon glyphicon-plus"></span> Add Plans</strong></a>
+						  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						  	<li><a id="add_activity_link" href="#"><span class="glyphicon glyphicon-map-marker"></span> Activity</a></li>
+							<li><a href="#"><span class="glyphicon glyphicon-home"></span> Accommodation</a></li>
+							<li><a href="#"><span class="glyphicon glyphicon-road"></span> Transport</a></li>
+						  </ul>
+						  <div class="pull-right text-muted">
+						  		<ul class="list-inline">
+									<li><small>All</small></li>
+									<li><small>Activities</small></li>
+									<li><small>Accommodations</small></li>
+									<li><small>Transport</small></li>
+								</ul>
+						  </div>
+					</div>
+		 		{% include "trip/activities.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activities=activities dates=dates activity_category_icons=activity_category_icons%}
+		 	</div>
+ </div>

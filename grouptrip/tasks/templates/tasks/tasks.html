@@ -1,30 +1,32 @@
-<div id="tasks_content" class="carousel slide">
-	<div class="carousel-inner">
-		<div class="item active">
-			<p>
-				<button id="add_task" type="button" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span>  Add Task</button>
-			</p>
-			<div id="task_form_div" class="collapse">
-				{% include "tasks/task_form.html" with trip_participants=trip_participants%}
+<div class="col-lg-6 left-content">
+	<div id="tasks_content" class="carousel slide">
+		<div class="carousel-inner">
+			<div class="item active">
+				<p>
+					<button id="add_task" type="button" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span>  Add Task</button>
+				</p>
+				<div id="task_form_div" class="collapse">
+					{% include "tasks/task_form.html" with trip_participants=trip_participants%}
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>Tasks List</strong></div>
+					<table id="tasks_table" class="table table-hover">
+						{% for task in tasks %}
+									{% include "tasks/task_summary.html" with task=task  task_num=forloop.counter%}
+						{% empty %}
+							<div id="no_tasks">
+								<tr><td><strong>No Tasks</strong></td></tr>
+							</div>
+						{% endfor %}
+					</table>
+				</div>
 			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading"><strong>Tasks List</strong></div>
-				<table id="tasks_table" class="table table-hover">
-					{% for task in tasks %}
-								{% include "tasks/task_summary.html" with task=task  task_num=forloop.counter%}
-					{% empty %}
-						<div id="no_tasks">
-							<p>No Tasks</p>
-						</div>
-					{% endfor %}
-				</table>
-			</div>
+			{% for task in tasks %}
+				<div class="item">
+					{% include "tasks/task_details.html" with task=task%}
+				</div>
+			{% endfor %}
+			
 		</div>
-		{% for task in tasks %}
-			<div class="item">
-				{% include "tasks/task_details.html" with task=task%}
-			</div>
-		{% endfor %}
-		
 	</div>
 </div>

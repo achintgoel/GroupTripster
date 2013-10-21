@@ -1,25 +1,21 @@
 {% load trip_extras %}
-<br>
-
-<div id="activity_content" class="carousel slide">
+<div id="activity_content" class="activity-carousel carousel slide">
 	<div class="carousel-inner">
 		<div class="item active">
-			<div>
-				<p><button id="createActivityButton" type="button" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Create Activity</button>
-				<button id="find_activity_button" type="button" class="btn btn-info btn-small"><span class="glyphicon glyphicon-search"></span> Find Activity</button>
-				</p>
-			</div>
 			{% for date in dates %}
-				<button type="button" class="btn btn-default dropdown-toggle btn-block" data-toggle="collapse" data-target="#my{{date|date:"Y-m-d"}}Activities">
-					Day {{ forloop.counter}}: {{ date }} <span class="glyphicon glyphicon-collapse-down"></span></button>
-				<br>
+				<div class="alert alert-success">
+					<strong>Day {{ forloop.counter}}: {{ date }}</strong>
+					<div class="pull-right">
+						<a data-toggle="collapse" href="#my{{date|date:"Y-m-d"}}Activities"><small>Show   <span class="glyphicon glyphicon-chevron-down"></span></small></a>
+					</div>
+				</div>
 				<div id="my{{ date|date:"Y-m-d" }}Activities" class="collapse in">
 					{% if date in activities %}
 						{% for activity in activities|lookup:date %}
 							{% include "trip/activity_summary2.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity=activity activity_category_icon=activity_category_icons|lookup:activity.category%}
 						{% empty %}
-							<div id="no{{ date|date:"Y-m-d" }}Activities">
-								No Activities for this day
+							<div id="no{{ date|date:"Y-m-d" }}Activities" class="text-center">
+								<strong>No Activities for this day</strong>
 							</div>
 							<br>
 						{% endfor %}
@@ -27,10 +23,6 @@
 				</div>
 			{% endfor %}
 	    </div>
-	    
-		<div class="item">
-			{% include "finder/finder.html"%}
-		</div>
 	</div>
 </div>
 

@@ -9,7 +9,7 @@
 	{% include "googlemaps/places_info_window.html" %}
 	{% include "trip/create_activity.html"%}
 	<input type="hidden" id="id_slug" value="{{ trip.slug }}" />
-
+<script language="javascript">var STATIC_URL = "{{ STATIC_URL }}";</script>
 <div class="container">	
 	<div class="jumbotron">
 	      <div class="container">
@@ -27,40 +27,57 @@
 	      </div>
 	</div>
 
-
+	
 	<div class="row">
-	  <div class="col-lg-3">
-	  	<div class="well sidebar-nav">
-			<ul class="nav nav-pills nav-stacked">
-				<li class="active"><a href="#itinerary" data-toggle="pill"><span class="glyphicon glyphicon-calendar"></span>  Itinerary</a></li>
-				<li><a href="#tasks" data-toggle="pill"><span class="glyphicon glyphicon-tasks"></span>  Tasks</a></li>
-				<li><a href="#" data-toggle="pill"><span class="glyphicon glyphicon-pencil"></span>  Surveys</a></li>
-				<li><a href="#" data-toggle="pill"><span class="glyphicon glyphicon-usd"></span>  Costs</a></li>
-				<li><a href="#" data-toggle="pill"><span class="glyphicon glyphicon-picture"></span>  Photo Album</a></li>
-				<li><a href="#invite" data-toggle="pill"><span class="glyphicon glyphicon-user"></span>  Invite Friends</a></li>
-			</ul>
+		<div class="col-lg-12">
+			<div class="btn-group btn-group-justified btn-nav-group" data-toggle="buttons">
+			  <label class="btn btn-success nav-options"  data-target="#itinerary">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-calendar"></span>  Itinerary</strong>
+			  </label>
+			  <label class="btn btn-success nav-options"  data-target="#finder">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-search"></span>  Finder</strong>
+			  </label>
+			  <label class="btn btn-success nav-options" data-target="#tasks">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-tasks"></span>  Tasks</strong>
+			  </label>
+			  <label class="btn btn-success nav-options" data-target="#">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-pencil"></span>  Surveys</strong>
+			  </label>
+			  <label class="btn btn-success nav-options" data-target="#">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-usd"></span>  Costs</strong>
+			  </label>
+			  <label class="btn btn-success nav-options" data-target="#">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-picture"></span>  Photo Album</strong>
+			  </label>
+			  <label class="btn btn-success nav-options" data-target="#invite">
+			    <input type="radio"><strong><span class="glyphicon glyphicon-user"></span>  Invite</strong>
+			  </label>
+			</div>
 		</div>
-	  </div>
-	  
-	  <div class="tab-content">
-	  	<!--Content of Itinerary Tab-->
-	  	<div class="tab-pane active" id="itinerary">
-	  		{% include "trip/itinerary.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activities=activities dates=dates activity_category_icons=activity_category_icons%}
-	  	</div>
-	  	<!--Content of Tasks Tab-->
-	  	<div class="tab-pane" id="tasks">
-	  		<div class="col-lg-5">
-	  			{% include "tasks/tasks.html" with tasks=tasks trip_participants=trip_participants%}
-	  		</div>
-	  	</div>
-	  	<!--Content of Invite Tab-->
-	  	<div class="tab-pane" id="invite">
-	  		{% include "invite/invite.html" with user_list=user_list trip_participants=trip_participants%}
-	  	</div>
-	  </div>
-	  <div class="col-lg-4">
-		  		{% include "googlemaps/map.html" %}
-	  </div>
+		
+		<div class="container">
+			<div class="tab-content">
+			  	<!--Content of Itinerary Tab-->
+			  	<div class="tab-pane active" id="itinerary">
+			  			{% include "trip/itinerary2.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activities=activities dates=dates activity_category_icons=activity_category_icons%}
+			  	</div>
+			  	<!--Content of Finder Tab-->
+			  	<div class="tab-pane" id="finder">
+			  			{% include "finder/finder.html"%}
+			  	</div>
+			  	<!--Content of Tasks Tab-->
+			  	<div class="tab-pane" id="tasks">
+			  			{% include "tasks/tasks.html" with tasks=tasks trip_participants=trip_participants%}
+			  	</div>
+			  	<!--Content of Invite Tab-->
+			  	<div class="tab-pane" id="invite">
+			  			{% include "invite/invite.html" with user_list=user_list trip_participants=trip_participants%}
+			  	</div>
+			</div>
+			<div class="col-lg-6">
+			  		{% include "googlemaps/map.html" %}
+			</div>
+		</div>
 	</div>
 </div>
 

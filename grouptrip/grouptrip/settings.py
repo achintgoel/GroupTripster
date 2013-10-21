@@ -65,7 +65,7 @@ YELP_TOKEN = '8PWwckgun3mDFunqpDspNTNxzBZsxa9G'
 YELP_TOKEN_SECRET = '5SQC-VYoe-rLx_TL2CjZUS5V008'
 
 EXPEDIA_CID = 55505
-EXPEDIA_API_KEY = 'fhsxgwmb6t3xyjt7j9x9us3j'
+EXPEDIA_API_KEY = 'nanpng3jdxcumwdq6cuds2nd'
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -82,6 +82,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/Users/agoel/Documents/bootstrap',
+    '/Users/agoel/Documents/raty-2.5.2/lib',
 )
 
 # List of finder classes that know how to find static files in

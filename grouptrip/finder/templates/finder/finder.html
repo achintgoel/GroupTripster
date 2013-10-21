@@ -1,7 +1,16 @@
-<p>
-	<a id="prev_activities" href="#"><small><span class="glyphicon glyphicon-chevron-left"></span> Back to Activities</small>
-	</a>
-</p>
-{% include "finder/finder_form2.html"%}
-<hr>
-<div id="finder_results"></div>
+<div class="col-lg-6 left-content">
+	<div class="container">
+		<ul class="nav nav-pills">
+			<li class="active"><a href="#finder_activities_form" data-toggle="pill"><strong><span class="glyphicon glyphicon-map-marker"></span> Activity</strong></a></li>
+			<li><a href="#finder_accommodations_form" data-toggle="pill"><strong><span class="glyphicon glyphicon-home"></span> Accommodation</strong></a></li>
+			<li><a href="#finder_transport_form" data-toggle="pill"><strong><span class="glyphicon glyphicon-road"></span> Transport</strong></a></li>
+		</ul>
+		<hr>
+		<div class="tab-content">
+		  <div class="tab-pane active" id="finder_activities_form">{% include "finder/finder_activities_form.html"%}</div>
+		  <div class="tab-pane" id="finder_accommodations_form">{% include "finder/finder_accommodations_form.html"%}</div>
+		  <div class="tab-pane" id="finder_transport_form">Yo</div>
+		</div>
+		<div id="finder_results"></div>
+	</div>
+</div>
