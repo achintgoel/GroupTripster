@@ -176,8 +176,11 @@ function initialize() {
 	  autocomplete4 = new google.maps.places.Autocomplete(input5, options);
 	  
 	  var markers = [];
+	  
+	  infowindow = new google.maps.InfoWindow({content:"holding..."});
 	  google.maps.event.addListener(autocomplete2, 'place_changed', function() {
-	  	findActivityPhotos();
+	  	var place = autocomplete2.getPlace();
+	  	findActivityPhotos(place);
 	  });
 	
 	  google.maps.event.addListener(searchBox, 'places_changed', function() {
@@ -197,28 +200,35 @@ function initialize() {
 	        anchor: new google.maps.Point(17, 34),
 	        scaledSize: new google.maps.Size(25, 25)
 	      };
-		
-		  //TODO:change this so you construct the html string here, not put it in places_info_window.html
-		  jQuery("#place_name").html("<p><strong>"+place.name+"</strong></p>");
-		  jQuery("#placeName").val(place.name);
-	 	  jQuery("#place_address").html("<p>"+place.formatted_address+"</p>");
-	 	  jQuery("#placeAddress").val(place.formatted_address);
-	 	  jQuery("#placeReference").val(place.reference);
-
-	      var contentString = jQuery("#infowindow").html();
+		  
+		  var contentHtml = '<div id="place_name">' +
+							'<p><strong>' + place.name + '</strong></p>' +
+							'</div>' +
+							'<div id="place_address">' +
+							'<p>'+place.formatted_address+'</p>' +
+							'</div>' +
+							'<button class="btn btn-small btn-primary add-infowindow" type="button" data-name="'+
+							place.name+'" data-address="' + 
+							place.formatted_address +'" data-reference="' +
+							place.reference + '">Add</button>';
+		  
 	      var marker = new google.maps.Marker({
 	        map: map,
 	        title: place.name,
 	        position: place.geometry.location,
-	        html: contentString
+	        html: contentHtml
 	      });
-	    
-	    
-	    var infowindow = new google.maps.InfoWindow({content:"holding..."});
-		
+	    		
 		google.maps.event.addListener(marker, 'click', function() {
 			infowindow.setContent(this.html);
 	  		infowindow.open(map,this);
+	  		
+	  		jQuery(".add-infowindow").click(function () {
+				var name = $(this).data( "name" );
+				var address = $(this).data( "address" );
+				var reference = $(this).data( "reference" );
+				onAddActivity(name, address, reference);
+			});
 	  		
 		});
 	      markers.push(marker);
@@ -236,9 +246,8 @@ function initialize() {
 	  
 }
 
-function findActivityPhotos() {
+function findActivityPhotos(place) {
 	jQuery("#id_activity_photo").empty();
-	  	var place = autocomplete2.getPlace();
 	  	jQuery("#activity_photo_collapse").collapse('show');
 	  	for (var i = 0, photo; photo = place.photos[i]; i++) {
 	  		var image_url = photo.getUrl({'maxWidth': 80, 'maxHeight': 80});
@@ -266,6 +275,39 @@ function onPlaceOnMap(name, address) {
     } 
   });
 }
+function onPlaceSocialActivity(activity_reviews_info) {
+	geocoder.geocode( { 'address': activity_reviews_info['address']}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			var html = "<h4>"+activity_reviews_info['name']+"</h4>";
+			for(var i = 0, activity_review; activity_review=activity_reviews_info['reviews'][i];i++) {
+				html += activity_review;
+			}
+			var marker = new google.maps.Marker({
+				map: map,
+				title: activity_reviews_info['name'],
+			    position: results[0].geometry.location,
+			    icon: STATIC_URL+'trip/map_icons/star-3.png',
+			    html: html
+			});
+		  	
+			
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(this.html);
+				infowindow.open(map,this);
+				jQuery('.star-show').raty({ 
+			    	readOnly: true,
+			    	starOff: STATIC_URL+'trip/star-off.png',
+			  		starOn : STATIC_URL+'trip/star-on.png',
+			  		starHalf: STATIC_URL+'trip/star-half.png',
+			  		score: function() {
+					    return $(this).attr('data-score');
+					}
+			    });
+			});
+		  	
+		} 
+  });
+}
 
 function onShowOnMap(name) {
 	marker = activity_markers[name];
@@ -276,13 +318,26 @@ function onShowOnMap(name) {
 //google.maps.event.addDomListener(window, 'load', initialize);
 
 //TODO: Replace this when you change add activity button to have unobstrusive javascript
-function onAddActivity() {
+function onAddActivity(name, address, reference) {
 	document.getElementById("createActivityForm").reset();
-	jQuery("#id_name").val(jQuery("#placeName").val());
-	jQuery("#id_address").val(jQuery("#placeAddress").val());
-	jQuery("#id_reference").val(jQuery("#placeReference").val());
+	jQuery("#id_name").val(name);
+	jQuery("#id_address").val(address);
+	jQuery("#id_reference").val(reference);
 	$('#createActivity').modal();
-	findActivityPhotos();
+	
+	var request = {
+  		reference: reference
+	};
+	
+	var service = new google.maps.places.PlacesService(map);
+	service.getDetails(request, callback);
+	
+	function callback(place, status) {
+  		if (status == google.maps.places.PlacesServiceStatus.OK) {
+  			findActivityPhotos(place);
+  		}
+	}
+	
 }
 
 function onAddActivityReal(name, address) {
@@ -290,7 +345,6 @@ function onAddActivityReal(name, address) {
 	jQuery("#id_name").val(name);
 	jQuery("#id_address").val(address);
 	$('#createActivity').modal();
-	findActivityPhotos();
 }
 
 function onEditActivity(activity_id, name, start_date, start_time, address, description, category) {
@@ -340,7 +394,7 @@ function onSaveActivity(){
 						var activity_id = $(this).data( "activity-id" );
 						onSaveComment(activity_id);
 					});
-					onPlaceOnMap(name, address);
+					onPlaceOnMap(activity['name'], activity['address']);
 					jQuery(".show-on-map").click(function () {
 						var name = $(this).data( "name" );
 						onShowOnMap(name);
@@ -356,6 +410,18 @@ function onSaveActivity(){
 		}, "json");
 }
 
+function loadSocialActivityData() {
+	var data = { 
+		slug: jQuery("#id_slug").val() };
+	// make request, process response
+	jQuery.get("/trip/get_social_activities/", data,
+		function(response){
+			for(var i = 0, activity_reviews_info; activity_reviews_info = response.activities_reviews_info[i]; i++) {
+				onPlaceSocialActivity(activity_reviews_info);
+			}
+			
+		}, "json");
+}
 
 //function that is called when the page is first loaded to get activity data
 function loadActivityData(){
@@ -468,6 +534,32 @@ function onSaveComment(activity_id) {
 		}, "json");
 }
 
+function onSaveReview(activity_id) {
+	var review = { 
+		activity_id: activity_id,
+		rating:jQuery("#"+activity_id+"_id_review_rating").data("score"),
+		description: jQuery("#"+activity_id+"_id_review_description").val()};
+	jQuery.post("/trip/save_review/", review,
+		function(response){
+			if(response.success == "True"){
+				document.getElementById(activity_id+"_review_form_div").remove();
+				jQuery("#"+activity_id+"_all_reviews").append("<p>"+response.html+"</p>").slideDown();
+				jQuery('.star-show').raty({ 
+			    	readOnly: true,
+			    	starOff: STATIC_URL+'trip/star-off.png',
+			  		starOn : STATIC_URL+'trip/star-on.png',
+			  		starHalf: STATIC_URL+'trip/star-half.png',
+			  		score: function() {
+					    return $(this).attr('data-score');
+					}
+			    });
+			}
+			else{
+				//TODO:Add in error cases
+			}
+		}, "json");
+}
+
 $(window).resize(function () {
     var h = $(window).height(),
         offsetTop = 60; // Calculate the top offset
@@ -543,7 +635,7 @@ function prepareDocument() {
 					jQuery('#activity_content').carousel('prev');
 				});
 	
-	jQuery(".edit_activity").click(function () {
+	jQuery(".edit-activity").click(function () {
 		var activity_id = $(this).data( "activity-id" );
 		var name = $(this).data( "activity-name" );
 		var start_date = $(this).data( "activity-start-date" );
@@ -567,20 +659,20 @@ function prepareDocument() {
 		});
 	
 	//DISCUSSION SETUP
-	jQuery('.activity_summary_content').carousel({interval : false});
-	jQuery(".discussion_link").click(function (e) {
+	jQuery('.activity-summary-content').carousel({interval : false});
+	jQuery(".discussion-link").click(function (e) {
 		e.preventDefault();
 		var activity_id = $(this).data( "activity-id" );
 		var carousel_id = '#'+activity_id+'_activity_summary_content';
 		jQuery(carousel_id).carousel(2);
 	});
-	jQuery(".prev_activity_summary").click(function (e) {
+	jQuery(".prev-activity-summary").click(function (e) {
 		e.preventDefault();
 		var activity_id = $(this).data( "activity-id" );
 		var carousel_id = '#'+activity_id+'_activity_summary_content';
 		jQuery(carousel_id).carousel(0);
 	});
-	jQuery(".comment_post").click(function () {
+	jQuery(".comment-post").click(function () {
 		var activity_id = $(this).data( "activity-id" );
 		onSaveComment(activity_id);
 	});
@@ -604,24 +696,38 @@ function prepareDocument() {
     
     
     //REVIEW SETUP
-    jQuery(".review_link").click(function (e) {
+    jQuery(".review-link").click(function (e) {
 		e.preventDefault();
 		var activity_id = $(this).data( "activity-id" );
 		var carousel_id = '#'+activity_id+'_activity_summary_content';
 		jQuery(carousel_id).carousel(1);
 	});
-    jQuery('.star').raty({ 
+    jQuery('.star-choice').raty({ 
     	half:true,
     	starOff: STATIC_URL+'trip/star-off.png',
   		starOn : STATIC_URL+'trip/star-on.png',
   		starHalf: STATIC_URL+'trip/star-half.png',
-  		size: 24
-  		
     });
+    
+    jQuery('.star-show').raty({ 
+    	readOnly: true,
+    	starOff: STATIC_URL+'trip/star-off.png',
+  		starOn : STATIC_URL+'trip/star-on.png',
+  		starHalf: STATIC_URL+'trip/star-half.png',
+  		score: function() {
+		    return $(this).attr('data-score');
+		}
+    });
+    
+    jQuery(".review-post").click(function () {
+		var activity_id = $(this).data( "activity-id" );
+		onSaveReview(activity_id);
+	});
 	  
     
 	initialize();
 	loadActivityData();
+	loadSocialActivityData();
 }
 
 jQuery(document).ready(prepareDocument);

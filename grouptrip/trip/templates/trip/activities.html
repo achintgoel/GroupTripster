@@ -12,7 +12,7 @@
 				<div id="my{{ date|date:"Y-m-d" }}Activities" class="collapse in">
 					{% if date in activities %}
 						{% for activity in activities|lookup:date %}
-							{% include "trip/activity_summary2.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity=activity activity_category_icon=activity_category_icons|lookup:activity.category%}
+							{% include "trip/activity_summary2.html" with user=user user_profile=user_profile user_participants_social_pf=user_participants_social_pf activity=activity activity_category_icon=activity_category_icons|lookup:activity.category%}
 						{% empty %}
 							<div id="no{{ date|date:"Y-m-d" }}Activities" class="text-center">
 								<strong>No Activities for this day</strong>

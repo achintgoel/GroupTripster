@@ -6,7 +6,6 @@
 {% block content %}
 
 
-	{% include "googlemaps/places_info_window.html" %}
 	{% include "trip/create_activity.html"%}
 	<input type="hidden" id="id_slug" value="{{ trip.slug }}" />
 <script language="javascript">var STATIC_URL = "{{ STATIC_URL }}";</script>
@@ -18,9 +17,9 @@
 	        <p>
 	        	<small>Participants:</small>
 	        	<img src="{{user_profile.picture.data.url}}">
-	        	{% for friend_participant in friend_participants_profiles %}
-	        		{% with friend_participant_profile=friend_participants_profiles|lookup:friend_participant %}     
-	        			<img src="{{friend_participant_profile.picture.data.url}}">
+	        	{% for user_participant in user_participants_social_pf %}
+	        		{% with user_participant_social_pf=user_participants_social_pf|lookup:user_participant %}     
+	        			<img src="{{user_participant_social_pf.picture.data.url}}">
 	        		{% endwith %}
 	        	{% endfor %}
 	        </p>
@@ -59,7 +58,7 @@
 			<div class="tab-content">
 			  	<!--Content of Itinerary Tab-->
 			  	<div class="tab-pane active" id="itinerary">
-			  			{% include "trip/itinerary2.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activities=activities dates=dates activity_category_icons=activity_category_icons%}
+			  			{% include "trip/itinerary2.html" with user=user user_profile=user_profile user_participants_social_pf=user_participants_social_pf activities=activities dates=dates activity_category_icons=activity_category_icons%}
 			  	</div>
 			  	<!--Content of Finder Tab-->
 			  	<div class="tab-pane" id="finder">

@@ -10,7 +10,7 @@ from django.utils import simplejson
 from django.utils.text import slugify
 from django.template.defaultfilters import date
 from trip.forms import CreateTripForm, CreateActivityForm
-from trip.models import Trip, TripParticipants, ActivityItinerary, ActivityComment
+from trip.models import Trip, TripParticipants, ActivityItinerary, ActivityComment, ActivityReview
 from tasks.models import Task
 from social_auth.db.django_models import UserSocialAuth
 import facebook
@@ -127,7 +127,32 @@ def get_activities(request):
 
 @login_required
 def get_social_activities(request):
-    return
+    slug = request.GET.get('slug')
+    trip = get_object_or_404(Trip, slug=slug)
+    #TODO get only activities that your friends were participants in
+    trip_activities = trip.activityitinerary_set.values_list('pk', flat=True)
+    #TODO:exclude activities that belong to trips that this user was in
+    #trips_participated = request.user.trip_participant.values_list('trip', flat=True)
+    social_activities = ActivityItinerary.objects.exclude(pk__in=list(trip_activities))
+    template = "trip/review_summary.html"
+    activities_reviews_info= []
+    for social_activity in social_activities:
+        activity_reviews = social_activity.activityreview_set.all()
+        activity_reviews_info = {}
+        activity_reviews_info['name'] = social_activity.name
+        activity_reviews_info['address'] = social_activity.address
+        activity_reviews_info['reviews'] = []
+        for activity_review in activity_reviews:
+            instance = UserSocialAuth.objects.filter(provider='facebook').get(user=activity_review.review_by)
+            graph = facebook.GraphAPI(instance.tokens['access_token'])
+            user_profile = graph.get_object("me", fields="id, name, first_name, last_name, picture")
+            html = render_to_string(template, {'activity_review': activity_review, 'reviewer_profile':user_profile})
+            activity_reviews_info['reviews'].append(html)
+        activities_reviews_info.append(activity_reviews_info)
+    
+    response = simplejson.dumps({'success':'True', 'activities_reviews_info':activities_reviews_info})      
+    return HttpResponse(response, 
+                        content_type='application/javascript; charset=utf-8')
 
 @login_required
 def save_comment(request):
@@ -147,6 +172,26 @@ def save_comment(request):
     response = simplejson.dumps({'success':'True', 'html':html})
     return HttpResponse(response, 
                         content_type='application/javascript; charset=utf-8')
+    
+@login_required
+def save_review(request):
+    activity_id = request.POST.get('activity_id')
+    rating = request.POST.get('rating')
+    description = request.POST.get('description')
+    review_by = request.user
+    activity = get_object_or_404(ActivityItinerary, pk=activity_id)
+    activity_review = ActivityReview(activity=activity, rating=rating, description=description, review_by=review_by)
+    activity_review.save()
+    
+    template = "trip/review_summary.html"
+    instance = UserSocialAuth.objects.filter(provider='facebook').get(user=request.user)
+    graph = facebook.GraphAPI(instance.tokens['access_token'])
+    user_profile = graph.get_object("me", fields="id, name, first_name, last_name, picture")
+    
+    html = render_to_string(template, {'activity_review': activity_review, 'reviewer_profile':user_profile})
+    response = simplejson.dumps({'success':'True', 'html':html})
+    return HttpResponse(response, 
+                        content_type='application/javascript; charset=utf-8')
 
 def trip_profile(request, slug):
     #TODO:either the trip is created by the user, or user is part of it
@@ -159,8 +204,9 @@ def trip_profile(request, slug):
     #TODO:change how this works?!
     #activities is a dictionary with key being date, and value being a list of all activities with that start_date
     activities = {}
+    activity_itinerary = trip.activityitinerary_set.all()
     for date in dates:
-        activities[date] = trip.activityitinerary_set.filter(start_date=date)
+        activities[date] = activity_itinerary.filter(start_date=date)
         
     activity_category_icons = ActivityItinerary.ACTIVITY_CATEGORY_ICONS
     
@@ -170,27 +216,19 @@ def trip_profile(request, slug):
     graph = facebook.GraphAPI(instance.tokens['access_token'])
     user_profile = graph.get_object("me", fields="id, name, first_name, last_name, picture")
     
-    users_participants_social_auth = UserSocialAuth.objects.filter(user__in=list(trip_participants_values))
-    friend_participants_profiles = {}
-    
-    for user_participant_social_auth in users_participants_social_auth:
-        friend_participant = graph.get_connections("me", "friends/"+user_participant_social_auth.uid)
-        friend_participant_data = friend_participant['data']
-        if friend_participant_data:
-            friend_participant_profile = graph.get_object(friend_participant_data[0]['id'], fields="id, name, first_name, last_name, picture")
-            friend_participants_profiles[user_participant_social_auth.user.username] = friend_participant_profile    
-    
-    #user_social_profiles = {}
-    #friends_non_users = []
-    #friends = graph.get_connections("me", "friends", fields="id, name, first_name, last_name, picture")
-    #for friend in friends['data']:
-     #   try:
-     #       user_social_auth = UserSocialAuth.objects.get(uid=friend['id'])
-     #       user_social_profiles[user_social_auth.user.id] = friend
-      #      if trip.tripparticipants_set.filter(participant=user_social_auth.user).exists():
-                
-      #  except UserSocialAuth.DoesNotExist:
-      #      friends_non_users.append(friend)
+    user_participants_social_pf = {}
+    user_non_participants_social_pf = {}
+    friends_non_users = []
+    friends = graph.get_connections("me", "friends", fields="id, name, first_name, last_name, picture")
+    for friend in friends['data']:
+        try:
+            user_social_auth = UserSocialAuth.objects.get(uid=friend['id'])
+            if trip.tripparticipants_set.filter(participant=user_social_auth.user).exists():
+                user_participants_social_pf[user_social_auth.user] = friend
+            else:
+                user_non_participants_social_pf[user_social_auth.user] = friend
+        except UserSocialAuth.DoesNotExist:
+            friends_non_users.append(friend)
     
     
     

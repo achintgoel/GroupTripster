@@ -9,14 +9,14 @@
 				  	</div>
 				  	<div class="col-lg-4">
 				  		<div class="pull-right">
-					  		<a href="#" class="edit_activity" data-activity-id="{{activity.id}}" data-activity-name="{{activity.name}}" data-activity-start-date="{{activity.start_date|date:"m/d/Y"}}"
+					  		<a href="#" class="edit-activity" data-activity-id="{{activity.id}}" data-activity-name="{{activity.name}}" data-activity-start-date="{{activity.start_date|date:"m/d/Y"}}"
 					  		data-activity-start-time="{{activity.start_time|time:"H:i"}}" data-activity-address="{{activity.address}}" data-activity-description="{{activity.description}}" data-activity-category="{{activity.category}}">
 					  			<span class="glyphicon glyphicon-edit"></span> 
 					  		</a>
-					  		<a href="#" class="review_link" data-activity-id="{{activity.id}}">
+					  		<a href="#" class="review-link" data-activity-id="{{activity.id}}">
 					  			<span class="glyphicon glyphicon-star"></span> 
 					  		</a>
-					  		<a href="#" class="discussion_link" data-activity-id="{{activity.id}}">
+					  		<a href="#" class="discussion-link" data-activity-id="{{activity.id}}">
 					  			<span class="glyphicon glyphicon-comment"></span> 
 					  		</a>
 				  		</div>
@@ -26,7 +26,7 @@
 		</div>
 		<div class="panel-body">
 			<div class="container">
-				<div id="{{activity.id}}_activity_summary_content" class="activity_summary_content carousel slide">
+				<div id="{{activity.id}}_activity_summary_content" class="activity-summary-content carousel slide">
 					<div class="carousel-inner">
 					    <div class="item active">
 					    	<div class="media">
@@ -53,10 +53,10 @@
 							</div>
 						</div>
 						<div class="item">
-							{% include "trip/review.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity_id=activity.id%}
+							{% include "trip/reviews.html" with user=user user_profile=user_profile user_participants_social_pf=user_participants_social_pf activity_id=activity.id activity_reviews=activity.activityreview_set.all%}
 						</div>
 						<div class="item">
-							{% include "trip/discussion.html" with user=user user_profile=user_profile friend_participants_profiles=friend_participants_profiles activity_id=activity.id activity_comments=activity.activitycomment_set.all%}
+							{% include "trip/discussion.html" with user=user user_profile=user_profile user_participants_social_pf=user_participants_social_pf activity_id=activity.id activity_comments=activity.activitycomment_set.all%}
 						</div>
 					</div>
 				</div>

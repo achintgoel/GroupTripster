@@ -76,6 +76,6 @@ class ActivityComment(models.Model):
 class ActivityReview(models.Model):
     activity = models.ForeignKey(ActivityItinerary)
     review_by =  models.ForeignKey(settings.AUTH_USER_MODEL)
-    review_rating = models.FloatField()
-    review_description = models.TextField()
+    rating = models.FloatField()
+    description = models.TextField()
     
